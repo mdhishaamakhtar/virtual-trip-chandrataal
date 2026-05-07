@@ -140,23 +140,32 @@
             }
 
             .ending {
-                position: relative;
-                display: none;
-                min-height: 100svh;
+                position: fixed;
+                inset: 0;
+                z-index: 100;
+                display: grid;
                 place-items: center;
                 padding: clamp(1.25rem, 4vw, 3rem);
                 overflow: hidden;
                 isolation: isolate;
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
                 background: linear-gradient(
                     135deg,
                     oklch(7% 0.023 252) 0%,
                     oklch(14% 0.038 226) 45%,
                     oklch(10% 0.031 168) 100%
                 );
+                transition:
+                    opacity 700ms var(--ease),
+                    visibility 700ms var(--ease);
             }
 
             .ending.active {
-                display: grid;
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
             }
 
             .ending::before {
@@ -1849,17 +1858,8 @@
             }
 
             function showEnding() {
-                chapters.forEach((chapter) => {
-                    chapter.classList.remove("active");
-                    chapter.setAttribute("aria-hidden", "true");
-                });
-
                 ending.classList.add("active");
                 ending.setAttribute("aria-hidden", "false");
-                ending.scrollIntoView({
-                    block: "start",
-                    behavior: prefersReducedMotion() ? "auto" : "smooth",
-                });
             }
 
             function prepareTrack(index) {
