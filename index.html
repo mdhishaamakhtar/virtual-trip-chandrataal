@@ -61,7 +61,8 @@
                 text-rendering: optimizeLegibility;
             }
 
-            body:not(.journey-started) {
+            body:not(.journey-started),
+            body.ending-open {
                 overflow: hidden;
             }
 
@@ -1776,6 +1777,7 @@
             function showIntro() {
                 ending.classList.remove("active");
                 ending.setAttribute("aria-hidden", "true");
+                document.body.classList.remove("ending-open");
                 chapters.forEach((chapter) => {
                     chapter.classList.remove("active");
                     chapter.setAttribute("aria-hidden", "true");
@@ -1812,6 +1814,7 @@
                 });
                 ending.classList.remove("active");
                 ending.setAttribute("aria-hidden", "true");
+                document.body.classList.remove("ending-open");
 
                 if (scroll) {
                     const target =
@@ -1860,6 +1863,7 @@
             function showEnding() {
                 ending.classList.add("active");
                 ending.setAttribute("aria-hidden", "false");
+                document.body.classList.add("ending-open");
             }
 
             function prepareTrack(index) {
