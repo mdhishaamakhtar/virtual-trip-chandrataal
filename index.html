@@ -1,0 +1,1981 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Chandra Taal</title>
+        <link
+            rel="icon"
+            href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='rgb(18,26,39)'/%3E%3Cpath d='M15 37c9-17 25-17 34 0-9 10-25 10-34 0Z' fill='rgb(123,210,203)'/%3E%3C/svg%3E"
+        />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Ibarra+Real+Nova:ital,wght@0,400;0,500;0,600;1,400&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;1,7..72,400;1,7..72,500&family=Sora:wght@400;500;600&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --ink: oklch(12% 0.028 247);
+                --ink-deep: oklch(7% 0.022 248);
+                --paper: oklch(89% 0.027 82);
+                --paper-warm: oklch(91% 0.03 82);
+                --paper-aged: oklch(84% 0.034 75);
+                --line: oklch(67% 0.046 76 / 0.36);
+                --text: oklch(21% 0.029 67);
+                --soft-text: oklch(39% 0.036 68);
+                --read-text: oklch(91% 0.018 78 / 0.96);
+                --read-muted: oklch(79% 0.026 80 / 0.72);
+                --read-line: oklch(91% 0.018 78 / 0.16);
+                --read-control: oklch(11% 0.022 247 / 0.74);
+                --read-control-hover: oklch(17% 0.027 238 / 0.9);
+                --read-control-text: oklch(89% 0.02 80 / 0.88);
+                --moon: oklch(84% 0.068 190);
+                --brass: oklch(70% 0.11 76);
+                --shadow: oklch(5% 0.018 246 / 0.54);
+                --ease: cubic-bezier(0.22, 1, 0.36, 1);
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            html {
+                min-height: 100%;
+                background: var(--ink-deep);
+                color: var(--paper);
+            }
+
+            body {
+                min-height: 100%;
+                margin: 0;
+                overflow-x: hidden;
+                background: linear-gradient(
+                    140deg,
+                    oklch(9% 0.024 248) 0%,
+                    oklch(15% 0.034 219) 48%,
+                    oklch(10% 0.027 154) 100%
+                );
+                color: var(--paper);
+                font-family: "Literata", Georgia, serif;
+                text-rendering: optimizeLegibility;
+            }
+
+            body:not(.journey-started) {
+                overflow: hidden;
+            }
+
+            button {
+                border: 1px solid transparent;
+                color: inherit;
+                cursor: pointer;
+                font: inherit;
+            }
+
+            #intro {
+                position: fixed;
+                inset: 0;
+                z-index: 100;
+                display: grid;
+                place-items: center;
+                padding: clamp(1.25rem, 4vw, 3rem);
+                overflow: hidden;
+                background: linear-gradient(
+                    135deg,
+                    oklch(7% 0.023 252) 0%,
+                    oklch(15% 0.041 228) 44%,
+                    oklch(12% 0.036 158) 100%
+                );
+                transition:
+                    opacity 700ms var(--ease),
+                    visibility 700ms var(--ease);
+            }
+
+            #intro::before {
+                content: "";
+                position: absolute;
+                inset: -20%;
+                background:
+                    repeating-linear-gradient(
+                        118deg,
+                        oklch(87% 0.054 84 / 0.055) 0 1px,
+                        transparent 1px 42px
+                    ),
+                    repeating-linear-gradient(
+                        28deg,
+                        oklch(84% 0.064 190 / 0.05) 0 1px,
+                        transparent 1px 58px
+                    );
+                mask-image: linear-gradient(
+                    120deg,
+                    transparent 0%,
+                    black 32%,
+                    black 68%,
+                    transparent 100%
+                );
+            }
+
+            #intro::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background:
+                    linear-gradient(
+                        0deg,
+                        oklch(4% 0.017 250 / 0.64),
+                        transparent 34%
+                    ),
+                    linear-gradient(
+                        90deg,
+                        oklch(6% 0.018 246 / 0.72),
+                        transparent 45%,
+                        oklch(7% 0.024 150 / 0.58)
+                    );
+            }
+
+            #intro.is-gone {
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+            }
+
+            .ending {
+                position: relative;
+                display: none;
+                min-height: 100svh;
+                place-items: center;
+                padding: clamp(1.25rem, 4vw, 3rem);
+                overflow: hidden;
+                isolation: isolate;
+                background: linear-gradient(
+                    135deg,
+                    oklch(7% 0.023 252) 0%,
+                    oklch(14% 0.038 226) 45%,
+                    oklch(10% 0.031 168) 100%
+                );
+            }
+
+            .ending.active {
+                display: grid;
+            }
+
+            .ending::before {
+                content: "";
+                position: absolute;
+                inset: -20%;
+                z-index: 0;
+                background:
+                    repeating-linear-gradient(
+                        118deg,
+                        oklch(87% 0.054 84 / 0.045) 0 1px,
+                        transparent 1px 42px
+                    ),
+                    repeating-linear-gradient(
+                        28deg,
+                        oklch(84% 0.064 190 / 0.045) 0 1px,
+                        transparent 1px 58px
+                    );
+                mask-image: linear-gradient(
+                    120deg,
+                    transparent 0%,
+                    black 32%,
+                    black 68%,
+                    transparent 100%
+                );
+            }
+
+            .ending::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                z-index: 0;
+                background:
+                    radial-gradient(
+                        ellipse at 72% 20%,
+                        oklch(83% 0.08 190 / 0.13),
+                        transparent 32%
+                    ),
+                    linear-gradient(
+                        0deg,
+                        oklch(4% 0.017 250 / 0.72),
+                        transparent 38%
+                    ),
+                    linear-gradient(
+                        90deg,
+                        oklch(6% 0.018 246 / 0.74),
+                        transparent 48%,
+                        oklch(7% 0.024 150 / 0.54)
+                    );
+            }
+
+            .intro-copy {
+                position: relative;
+                z-index: 1;
+                width: min(44rem, 100%);
+                text-align: left;
+            }
+
+            .intro-kicker {
+                margin: 0 0 1.2rem;
+                color: oklch(84% 0.068 190 / 0.82);
+                font:
+                    500 0.72rem/1.4 "Sora",
+                    system-ui,
+                    sans-serif;
+                letter-spacing: 0.16em;
+                text-transform: uppercase;
+            }
+
+            .intro-title {
+                margin: 0;
+                color: oklch(92% 0.029 84);
+                font:
+                    500 clamp(3.4rem, 11.5vw, 8.2rem) / 0.94 "Ibarra Real Nova",
+                    Georgia,
+                    serif;
+            }
+
+            .intro-subtitle {
+                max-width: 34rem;
+                margin: clamp(1.2rem, 4vw, 2rem) 0 0;
+                color: oklch(84% 0.03 83 / 0.84);
+                font-size: clamp(1.08rem, 2.2vw, 1.45rem);
+                line-height: 1.55;
+            }
+
+            .intro-subtitle + .intro-subtitle {
+                margin-top: 0.9rem;
+            }
+
+            .gift-signature {
+                margin-top: clamp(1.2rem, 3vw, 1.8rem);
+                color: oklch(83% 0.048 190 / 0.86);
+                font:
+                    italic 500 clamp(1.08rem, 1.8vw, 1.34rem) / 1.5 "Literata",
+                    Georgia,
+                    serif;
+            }
+
+            .intro-actions {
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 0.9rem;
+                margin-top: clamp(2rem, 6vw, 3.5rem);
+            }
+
+            .begin-btn,
+            .retry-btn,
+            .turn-btn,
+            .read-btn {
+                min-height: 3rem;
+                border-radius: 6px;
+                font:
+                    600 0.78rem/1 "Sora",
+                    system-ui,
+                    sans-serif;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                transition:
+                    transform 220ms var(--ease),
+                    background 220ms var(--ease),
+                    color 220ms var(--ease),
+                    opacity 220ms var(--ease),
+                    filter 220ms var(--ease);
+            }
+
+            .begin-btn,
+            .retry-btn,
+            .read-btn {
+                padding: 0.85rem 1.25rem;
+                background: oklch(82% 0.095 78);
+                color: oklch(15% 0.026 75);
+            }
+
+            .begin-btn:hover,
+            .retry-btn:hover,
+            .turn-btn:hover,
+            .read-btn:hover {
+                transform: translateY(-1px);
+            }
+
+            .begin-btn:hover,
+            .retry-btn:hover,
+            .read-btn:hover {
+                background: oklch(88% 0.082 83);
+            }
+
+            .begin-btn:disabled {
+                cursor: wait;
+                opacity: 0.48;
+                transform: none;
+            }
+
+            .retry-btn {
+                display: none;
+                background: oklch(67% 0.122 14);
+                color: oklch(95% 0.018 74);
+            }
+
+            .retry-btn.is-visible {
+                display: inline-flex;
+                align-items: center;
+            }
+
+            #stage {
+                min-height: 100svh;
+            }
+
+            .chapter {
+                position: relative;
+                display: none;
+                min-height: 100svh;
+                isolation: isolate;
+                background: var(--fallback);
+            }
+
+            .chapter.active {
+                display: block;
+            }
+
+            .chapter-bg {
+                position: fixed;
+                inset: 0;
+                z-index: 0;
+                background-color: var(--fallback);
+                background-image: var(--chapter-image);
+                background-position: var(--focus, center);
+                background-size: cover;
+                filter: saturate(0.86) contrast(1.04) brightness(0.72);
+            }
+
+            .chapter::before,
+            .chapter::after {
+                content: "";
+                position: fixed;
+                inset: 0;
+                z-index: 1;
+                pointer-events: none;
+            }
+
+            .chapter::before {
+                background:
+                    linear-gradient(
+                        90deg,
+                        oklch(7% 0.021 250 / 0.76) 0%,
+                        oklch(10% 0.026 228 / 0.56) 44%,
+                        oklch(9% 0.024 200 / 0.22) 100%
+                    ),
+                    linear-gradient(
+                        180deg,
+                        oklch(5% 0.018 250 / 0.46) 0%,
+                        transparent 45%,
+                        oklch(5% 0.018 250 / 0.64) 100%
+                    );
+            }
+
+            .chapter::after {
+                background:
+                    radial-gradient(
+                        ellipse at 18% 18%,
+                        var(--aura, oklch(62% 0.08 190 / 0.18)),
+                        transparent 34%
+                    ),
+                    linear-gradient(
+                        130deg,
+                        transparent 0 58%,
+                        var(--veil, oklch(70% 0.08 77 / 0.12)) 100%
+                    );
+                mix-blend-mode: screen;
+                opacity: 0.82;
+            }
+
+            .chapter-hero,
+            .chapter-read {
+                position: relative;
+                z-index: 2;
+            }
+
+            .chapter-hero {
+                min-height: 100svh;
+                display: grid;
+                align-items: end;
+                padding: clamp(5rem, 9vh, 7.5rem) clamp(1rem, 6vw, 5.5rem);
+            }
+
+            .hero-copy {
+                width: min(46rem, 100%);
+                text-align: left;
+            }
+
+            .chapter-count {
+                margin: 0 0 1rem;
+                color: var(--accent, var(--moon));
+                font:
+                    600 0.74rem/1.5 "Sora",
+                    system-ui,
+                    sans-serif;
+                letter-spacing: 0.16em;
+                text-transform: uppercase;
+            }
+
+            .route-line {
+                width: min(12rem, 60vw);
+                height: 1px;
+                margin: 0 0 1.35rem;
+                background: linear-gradient(
+                    90deg,
+                    var(--accent, var(--moon)),
+                    transparent
+                );
+            }
+
+            .hero-title {
+                max-width: 11ch;
+                margin: 0;
+                color: oklch(92% 0.029 84);
+                font:
+                    500 clamp(3.05rem, 10.4vw, 7.6rem) / 0.95 "Ibarra Real Nova",
+                    Georgia,
+                    serif;
+                text-shadow: 0 18px 52px oklch(4% 0.015 250 / 0.72);
+            }
+
+            .place-note {
+                max-width: 31rem;
+                margin: clamp(1rem, 3vw, 1.55rem) 0 0;
+                color: oklch(88% 0.031 83 / 0.86);
+                font:
+                    italic 400 clamp(1.12rem, 1.72vw, 1.42rem) / 1.52 "Literata",
+                    Georgia,
+                    serif;
+                text-shadow: 0 10px 34px oklch(4% 0.015 250 / 0.82);
+            }
+
+            .read-btn {
+                margin-top: clamp(1.6rem, 4vw, 2.35rem);
+            }
+
+            .chapter-read {
+                min-height: 100svh;
+                display: grid;
+                align-items: start;
+                padding: clamp(4rem, 8vh, 7rem) clamp(1.5rem, 5vw, 6rem)
+                    clamp(5rem, 10vh, 8rem);
+                background:
+                    radial-gradient(
+                        ellipse at 16% 0%,
+                        var(--aura, oklch(62% 0.08 190 / 0.18)) 0%,
+                        transparent 34rem
+                    ),
+                    linear-gradient(
+                        180deg,
+                        oklch(4% 0.016 250 / 0.9) 0%,
+                        oklch(5% 0.018 244 / 0.95) 42%,
+                        oklch(3% 0.014 250 / 0.97) 100%
+                    );
+            }
+
+            .reading-shell {
+                width: 100%;
+                margin: 0;
+            }
+
+            .reading-sheet {
+                column-count: 2;
+                column-gap: clamp(2.5rem, 7vw, 7rem);
+                column-fill: balance;
+                padding: 0;
+                border: 0;
+                border-radius: 0;
+                background: none;
+                box-shadow: none;
+                color: var(--read-text);
+                text-align: left;
+            }
+
+            .ch-eyebrow {
+                margin: 0 0 0.95rem;
+                color: var(--read-muted);
+                font:
+                    600 0.72rem/1.4 "Sora",
+                    system-ui,
+                    sans-serif;
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+                column-span: all;
+            }
+
+            .ch-title {
+                max-width: 12ch;
+                margin: 0 0 clamp(1.35rem, 4vw, 2.35rem);
+                color: oklch(93% 0.028 82);
+                font:
+                    500 clamp(2.1rem, 4.7vw, 4rem) / 0.98 "Ibarra Real Nova",
+                    Georgia,
+                    serif;
+                text-shadow: 0 12px 36px oklch(4% 0.015 250 / 0.75);
+                column-span: all;
+            }
+
+            .paragraph-block {
+                margin: 0;
+                color: var(--read-text);
+                font-size: clamp(1.02rem, 1.04vw, 1.15rem);
+                font-weight: 400;
+                line-height: 1.78;
+                text-shadow: 0 10px 30px oklch(2% 0.012 250 / 0.64);
+                break-inside: avoid;
+            }
+
+            .paragraph-block + .paragraph-block {
+                margin-top: 1.08rem;
+            }
+
+            .final-line {
+                margin-top: 1.75rem;
+                color: oklch(84% 0.046 190 / 0.92);
+                font:
+                    italic 500 clamp(1.32rem, 2.4vw, 1.75rem) / 1.42 "Literata",
+                    Georgia,
+                    serif;
+                text-shadow: 0 10px 30px oklch(2% 0.012 250 / 0.66);
+                column-span: all;
+            }
+
+            .page-turner {
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                gap: 0.75rem;
+                margin-top: clamp(1.7rem, 4vw, 2.4rem);
+                padding-top: 1.15rem;
+                border-top: 1px solid var(--read-line);
+                column-span: all;
+            }
+
+            .turn-btn {
+                min-width: 7.5rem;
+                padding: 0 1rem;
+                border-color: oklch(91% 0.018 78 / 0.14);
+                background: var(--read-control);
+                color: var(--read-control-text);
+                box-shadow: 0 14px 38px oklch(2% 0.012 250 / 0.2);
+            }
+
+            .turn-btn.primary {
+                margin-left: auto;
+                border-color: transparent;
+                background: var(--accent, oklch(80% 0.088 78));
+                color: oklch(9% 0.018 246);
+            }
+
+            .turn-btn:hover {
+                border-color: oklch(91% 0.018 78 / 0.24);
+                background: var(--read-control-hover);
+                color: oklch(93% 0.018 78);
+            }
+
+            .turn-btn.primary:hover {
+                border-color: transparent;
+                background: var(--accent, oklch(80% 0.088 78));
+                color: oklch(9% 0.018 246);
+                filter: brightness(1.08);
+            }
+
+            #audio-toggle {
+                position: fixed;
+                left: 50%;
+                bottom: max(0.85rem, env(safe-area-inset-bottom));
+                z-index: 80;
+                min-height: 2.25rem;
+                padding: 0 0.7rem;
+                border-radius: 999px;
+                border-color: oklch(91% 0.018 78 / 0.12);
+                background: oklch(8% 0.02 247 / 0.62);
+                color: oklch(87% 0.02 80 / 0.68);
+                font:
+                    500 0.68rem/1 "Sora",
+                    system-ui,
+                    sans-serif;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                transform: translateX(-50%);
+                opacity: 0.58;
+                transition:
+                    opacity 180ms var(--ease),
+                    color 180ms var(--ease),
+                    background 180ms var(--ease),
+                    transform 180ms var(--ease);
+            }
+
+            body:not(.journey-started) #audio-toggle {
+                display: none;
+            }
+
+            #audio-toggle:hover {
+                background: oklch(12% 0.024 247 / 0.82);
+                color: oklch(91% 0.018 78 / 0.9);
+                opacity: 0.98;
+                transform: translate(-50%, -1px);
+            }
+
+            #audio-toggle:focus-visible {
+                outline: 2px solid var(--accent, var(--moon));
+                outline-offset: 3px;
+                opacity: 1;
+            }
+
+            .chapter[data-chapter="0"] {
+                --fallback: oklch(17% 0.036 71);
+                --accent: oklch(76% 0.104 75);
+                --aura: oklch(74% 0.1 62 / 0.2);
+                --veil: oklch(58% 0.11 27 / 0.13);
+                --focus: center;
+            }
+
+            .chapter[data-chapter="1"] {
+                --fallback: oklch(11% 0.037 248);
+                --accent: oklch(75% 0.077 206);
+                --aura: oklch(69% 0.08 215 / 0.18);
+                --veil: oklch(53% 0.104 258 / 0.12);
+                --focus: center;
+            }
+
+            .chapter[data-chapter="2"] {
+                --fallback: oklch(16% 0.045 147);
+                --accent: oklch(75% 0.1 143);
+                --aura: oklch(72% 0.1 146 / 0.18);
+                --veil: oklch(57% 0.098 171 / 0.12);
+                --focus: center;
+            }
+
+            .chapter[data-chapter="3"] {
+                --fallback: oklch(21% 0.025 206);
+                --accent: oklch(82% 0.055 191);
+                --aura: oklch(83% 0.06 196 / 0.2);
+                --veil: oklch(67% 0.07 225 / 0.12);
+                --focus: center;
+            }
+
+            .chapter[data-chapter="4"] {
+                --fallback: oklch(16% 0.04 311);
+                --accent: oklch(72% 0.092 318);
+                --aura: oklch(72% 0.09 318 / 0.18);
+                --veil: oklch(57% 0.1 290 / 0.12);
+                --focus: center;
+            }
+
+            .chapter[data-chapter="5"] {
+                --fallback: oklch(12% 0.045 220);
+                --accent: oklch(82% 0.096 192);
+                --aura: oklch(80% 0.1 190 / 0.24);
+                --veil: oklch(67% 0.095 236 / 0.13);
+                --focus: center;
+            }
+
+            @media (max-width: 860px) {
+                .chapter-hero,
+                .chapter-read {
+                    padding-left: clamp(1rem, 5vw, 1.4rem);
+                    padding-right: clamp(1rem, 5vw, 1.4rem);
+                }
+
+                .chapter-hero {
+                    align-items: end;
+                    padding-bottom: clamp(4.4rem, 14vh, 7rem);
+                }
+
+                .hero-title {
+                    max-width: 10ch;
+                }
+
+                .reading-shell {
+                    margin: 0;
+                }
+
+                .reading-sheet {
+                    column-count: 1;
+                    column-gap: 0;
+                }
+
+                #audio-toggle {
+                    top: max(0.65rem, env(safe-area-inset-top));
+                    right: max(0.65rem, env(safe-area-inset-right));
+                    bottom: auto;
+                    left: auto;
+                    transform: none;
+                    opacity: 0.5;
+                }
+
+                #audio-toggle:hover {
+                    transform: translateY(-1px);
+                }
+            }
+
+            @media (max-width: 560px) {
+                .intro-title {
+                    font-size: clamp(3.15rem, 16vw, 4.6rem);
+                }
+
+                .intro-actions {
+                    flex-direction: column;
+                    align-items: stretch;
+                }
+
+                .intro-actions .begin-btn,
+                .intro-actions .retry-btn,
+                .intro-actions .turn-btn,
+                .page-turner .turn-btn {
+                    width: 100%;
+                }
+
+                .chapter::before {
+                    background:
+                        linear-gradient(
+                            180deg,
+                            oklch(5% 0.018 250 / 0.38) 0%,
+                            oklch(6% 0.02 250 / 0.34) 42%,
+                            oklch(5% 0.018 250 / 0.7) 100%
+                        ),
+                        linear-gradient(
+                            90deg,
+                            oklch(7% 0.021 250 / 0.52),
+                            transparent 65%
+                        );
+                }
+
+                .chapter-hero {
+                    padding-top: 3.2rem;
+                    min-height: 100svh;
+                }
+
+                .chapter-read {
+                    padding-top: 4.25rem;
+                    padding-bottom: 4.6rem;
+                }
+
+                .hero-title {
+                    font-size: clamp(2.85rem, 14vw, 4.45rem);
+                }
+
+                .place-note {
+                    font-size: clamp(1.02rem, 4.5vw, 1.2rem);
+                }
+
+                .reading-sheet {
+                    padding: 0;
+                }
+
+                .paragraph-block {
+                    font-size: clamp(1rem, 4.35vw, 1.1rem);
+                    line-height: 1.72;
+                }
+
+                .page-turner {
+                    align-items: stretch;
+                    flex-direction: column-reverse;
+                }
+
+                .turn-btn.primary {
+                    margin-left: 0;
+                }
+
+                #audio-toggle {
+                    min-height: 2.45rem;
+                    padding: 0 0.75rem;
+                }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                *,
+                *::before,
+                *::after {
+                    scroll-behavior: auto !important;
+                    transition-duration: 1ms !important;
+                    animation-duration: 1ms !important;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div id="intro" aria-live="polite">
+            <div class="intro-copy">
+                <p class="intro-kicker">For Vaniya</p>
+                <h1 class="intro-title">A small trip north</h1>
+                <p class="intro-subtitle">
+                    You said life has felt monotonous, and four years is a long
+                    time to not see the mountains. I cannot take you there from
+                    Bangalore right now, so I made you this.
+                </p>
+                <p class="intro-subtitle">
+                    For the low days, for the gap year, for the poems you keep
+                    carrying, and for the Everest you will climb one day.
+                </p>
+                <div class="intro-actions">
+                    <button
+                        id="begin-btn"
+                        class="begin-btn"
+                        type="button"
+                        disabled
+                    >
+                        Loading images
+                    </button>
+                    <button id="retry-btn" class="retry-btn" type="button">
+                        Retry images
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <main id="stage">
+            <section
+                class="chapter active"
+                data-chapter="0"
+                data-img="https://images.unsplash.com/photo-1639546218218-4614c6db9609?w=1800&q=82&fit=crop"
+                aria-labelledby="chapter-title-0"
+            >
+                <div class="chapter-bg" aria-hidden="true"></div>
+                <div class="chapter-hero">
+                    <div class="hero-copy">
+                        <p class="chapter-count">Chapter I</p>
+                        <div class="route-line" aria-hidden="true"></div>
+                        <h2 id="chapter-title-0" class="hero-title">
+                            The city that held you
+                        </h2>
+                        <p class="place-note">
+                            A city can let you leave and still travel inside
+                            your bag.
+                        </p>
+                        <button class="read-btn" type="button" data-read>
+                            Read chapter
+                        </button>
+                    </div>
+                </div>
+                <div class="chapter-read">
+                    <div class="reading-shell">
+                        <article class="reading-sheet">
+                            <p class="ch-eyebrow">Lucknow, before departure</p>
+                            <p class="paragraph-block">
+                                There is an hour in Lucknow when the light turns
+                                into cooling brass. It sits on old walls, on
+                                scooter mirrors, on the wet lip of a tea glass.
+                                You have lived inside that light for years. It
+                                has watched you hurry, wait, study, doubt
+                                yourself, become sure again, and carry a hundred
+                                quiet plans without showing them to everyone.
+                            </p>
+                            <p class="paragraph-block">
+                                That morning, leaving did not feel like a brave
+                                thing. It felt small and practical. One bag. One
+                                ticket. A shawl folded twice. A bottle of water.
+                                Your phone at eighty percent. The name Chandra
+                                Taal had lived in your head for so long that it
+                                no longer sounded like a place. It sounded like
+                                a promise you had made to yourself in private
+                                and now had to honor.
+                            </p>
+                            <p class="paragraph-block">
+                                You moved through the house carefully, as if
+                                noise could change your mind. A cup was rinsed
+                                and placed upside down. A charger was checked
+                                again. A message was typed, erased, and typed
+                                again with fewer words. This was not running
+                                away. It was quieter than that. It was the
+                                moment a person finally stops negotiating with a
+                                dream and simply begins to pack for it.
+                            </p>
+                            <p class="paragraph-block">
+                                On the way to Charbagh, the city kept offering
+                                you reasons to stay. The smell of jasmine near a
+                                crossing. A handcart piled with guavas. A boy
+                                running with school shoes in one hand. The azaan
+                                rising from different directions and meeting
+                                somewhere above the road. You looked at all of
+                                it carefully, not because you were leaving
+                                forever, but because leaving changes how love
+                                looks. Suddenly every ordinary thing becomes
+                                evidence.
+                            </p>
+                            <p class="paragraph-block">
+                                At the station, people were carrying steel
+                                tiffins, suitcases, sleeping children, entire
+                                versions of home. You stood among them with your
+                                bag near your feet and felt two things at once:
+                                the ache of going, and the strange lightness of
+                                not asking anyone for permission. The train had
+                                not arrived yet, but some part of you had
+                                already stepped north.
+                            </p>
+                            <p class="paragraph-block">
+                                You thought of all the women you had been in
+                                this city. The careful one. The funny one. The
+                                ambitious one. The one who said yes too quickly,
+                                the one who stayed quiet too long, the one who
+                                kept a private map in her head when the room
+                                became too small. They were all coming with you.
+                                None of them had to be abandoned at the
+                                platform.
+                            </p>
+                            <p class="paragraph-block">
+                                When the train finally pulled in, the platform
+                                changed mood at once. Bags rose. Bodies leaned
+                                forward. The future became a metal doorway with
+                                a number painted beside it. You climbed in,
+                                found your seat, and looked out at Lucknow
+                                through glass. The city did not disappear. It
+                                became the first page.
+                            </p>
+                            <div class="page-turner">
+                                <button
+                                    class="turn-btn"
+                                    type="button"
+                                    data-hero
+                                >
+                                    See the place
+                                </button>
+                                <button
+                                    class="turn-btn primary"
+                                    type="button"
+                                    data-go="1"
+                                >
+                                    Next chapter
+                                </button>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <section
+                class="chapter"
+                data-chapter="1"
+                data-img="https://images.pexels.com/photos/30292586/pexels-photo-30292586.jpeg?w=1800&q=82"
+                aria-labelledby="chapter-title-1"
+            >
+                <div class="chapter-bg" aria-hidden="true"></div>
+                <div class="chapter-hero">
+                    <div class="hero-copy">
+                        <p class="chapter-count">Chapter II</p>
+                        <div class="route-line" aria-hidden="true"></div>
+                        <h2 id="chapter-title-1" class="hero-title">
+                            The train that carried night
+                        </h2>
+                        <p class="place-note">
+                            Night does not pass on a train. It keeps changing
+                            seats.
+                        </p>
+                        <button class="read-btn" type="button" data-read>
+                            Read chapter
+                        </button>
+                    </div>
+                </div>
+                <div class="chapter-read">
+                    <div class="reading-shell">
+                        <article class="reading-sheet">
+                            <p class="ch-eyebrow">Train north, 21:40</p>
+                            <p class="paragraph-block">
+                                The train left Lucknow with the slow confidence
+                                of something that had done this forever. Your
+                                window did not close all the way. At first the
+                                air through the gap was only air, warm and
+                                dusty. Then the city thinned. The shops became
+                                warehouses, the warehouses became fields, and
+                                the fields became a darkness large enough to
+                                hold your thoughts without answering them.
+                            </p>
+                            <p class="paragraph-block">
+                                A woman across from you fell asleep before the
+                                platform ended. Someone opened a packet of
+                                chips. A child asked the same question until his
+                                father laughed. You watched faces appear and
+                                disappear in the glass, your own among them,
+                                floating over the black outside. You were still
+                                yourself, but in the window you looked slightly
+                                unfamiliar, as if the journey had already
+                                started editing you.
+                            </p>
+                            <p class="paragraph-block">
+                                For the first hour, you kept checking your
+                                phone. Messages arrived, then stopped. The
+                                network weakened. The little symbols in the
+                                corner of the screen became less certain. It
+                                should have made you anxious. Instead, it felt
+                                like a curtain being drawn, not to shut you out,
+                                but to give you privacy.
+                            </p>
+                            <p class="paragraph-block">
+                                Sleep came in pieces. Every time you woke, the
+                                world had changed. Moonlit sugarcane. A station
+                                with one yellow bulb. A river flashing silver
+                                for three seconds and then gone. Distance did
+                                not feel like adventure yet. It felt like being
+                                carefully unstitched from the familiar, thread
+                                by thread, while everyone else slept through the
+                                work.
+                            </p>
+                            <p class="paragraph-block">
+                                At some point, the train slowed near a town you
+                                would never know the name of. A man on the
+                                platform poured tea from a height, amber liquid
+                                catching the light before it fell into small
+                                cups. You almost got down. You did not. The
+                                train moved again, and the tea stall slid
+                                backward into the dark like a memory that
+                                belonged to somebody else.
+                            </p>
+                            <p class="paragraph-block">
+                                By three in the morning, the air had teeth. You
+                                wrapped the shawl tighter and stopped pretending
+                                to read. Somewhere beyond the window, the north
+                                was gathering itself. You could feel it before
+                                you could see it, a coldness in the dark, a
+                                change in the rhythm of the tracks, a quiet
+                                warning that the easy part of the map was
+                                ending.
+                            </p>
+                            <p class="paragraph-block">
+                                You were not fearless. That mattered. Fear was
+                                there in the berth with you, small and awake,
+                                but it was not in charge. Beside it was another
+                                feeling, harder to name: the sense that you were
+                                moving toward a version of yourself who had been
+                                waiting patiently, without complaint, for you to
+                                arrive.
+                            </p>
+                            <div class="page-turner">
+                                <button
+                                    class="turn-btn"
+                                    type="button"
+                                    data-hero
+                                >
+                                    See the place
+                                </button>
+                                <button
+                                    class="turn-btn"
+                                    type="button"
+                                    data-go="0"
+                                >
+                                    Previous
+                                </button>
+                                <button
+                                    class="turn-btn primary"
+                                    type="button"
+                                    data-go="2"
+                                >
+                                    Next chapter
+                                </button>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <section
+                class="chapter"
+                data-chapter="2"
+                data-img="https://images.unsplash.com/photo-1609920658906-8223bd289001?w=1800&q=82&fit=crop"
+                aria-labelledby="chapter-title-2"
+            >
+                <div class="chapter-bg" aria-hidden="true"></div>
+                <div class="chapter-hero">
+                    <div class="hero-copy">
+                        <p class="chapter-count">Chapter III</p>
+                        <div class="route-line" aria-hidden="true"></div>
+                        <h2 id="chapter-title-2" class="hero-title">
+                            What the Beas already knew
+                        </h2>
+                        <p class="place-note">
+                            The river speaks first, before the mountains show
+                            their faces.
+                        </p>
+                        <button class="read-btn" type="button" data-read>
+                            Read chapter
+                        </button>
+                    </div>
+                </div>
+                <div class="chapter-read">
+                    <div class="reading-shell">
+                        <article class="reading-sheet">
+                            <p class="ch-eyebrow">Manali, first altitude</p>
+                            <p class="paragraph-block">
+                                In Manali, you heard the Beas before you saw it.
+                                The sound reached you between buildings, rough
+                                and bright, water striking stone with complete
+                                belief in itself. You followed it almost without
+                                deciding to. After the train and the bus and the
+                                tiredness of changing seats, the river felt like
+                                a voice that did not need to impress anyone.
+                            </p>
+                            <p class="paragraph-block">
+                                You stood on a bridge and let the noise fill the
+                                parts of you that were still carrying Lucknow.
+                                The river was not calm, but it made you calmer.
+                                It had come from somewhere higher and was going
+                                somewhere lower. It did not pause to explain
+                                itself. There was comfort in that, in watching
+                                something move with purpose and no apology.
+                            </p>
+                            <p class="paragraph-block">
+                                The mountains did not arrive like scenery. They
+                                arrived as pressure, in your ears, in your
+                                lungs, in the way every road seemed to lift
+                                under your feet. Deodars stood straight and
+                                dark, like the hillside had learned how to pray
+                                upward. You kept looking up and then laughing
+                                quietly at yourself, because there was always
+                                more up.
+                            </p>
+                            <p class="paragraph-block">
+                                In the bazaar, a woman sold you dried apricots
+                                from a paper packet. She spoke quickly, smiling
+                                before you understood the sentence, and you
+                                smiled back because warmth is sometimes a
+                                language of its own. Your fingers smelled sweet
+                                for hours. You kept lifting them near your face
+                                without thinking, carrying that small
+                                fruit-sugar through lanes of wool caps, rain
+                                jackets, steam, and mud.
+                            </p>
+                            <p class="paragraph-block">
+                                The day was full of practical tasks: finding the
+                                next shared ride, buying socks, asking twice
+                                about the road, pretending you understood the
+                                difference between confidence and luck. But
+                                underneath all of it was a quieter change. You
+                                were beginning to listen to your body. When it
+                                asked for food, you fed it. When it asked for
+                                rest, you stopped. This too felt like travel,
+                                learning not to treat yourself as an obstacle.
+                            </p>
+                            <p class="paragraph-block">
+                                That night, the guesthouse room had four
+                                blankets and a window facing trees. You used all
+                                four. The river kept talking below, softer now
+                                but still awake. For the first time on the trip,
+                                nobody near you knew who you were supposed to
+                                be. Nobody expected an answer, a mood, a version
+                                of you they recognized. You were tired, cold,
+                                and free in a way that felt almost too simple to
+                                trust.
+                            </p>
+                            <p class="paragraph-block">
+                                Before sleeping, you wrote one sentence in your
+                                journal: I am farther than yesterday. It looked
+                                plain on the page. It did not say enough. Still,
+                                when you read it back, you felt something
+                                settle. Farther was not only distance. Farther
+                                was proof.
+                            </p>
+                            <div class="page-turner">
+                                <button
+                                    class="turn-btn"
+                                    type="button"
+                                    data-hero
+                                >
+                                    See the place
+                                </button>
+                                <button
+                                    class="turn-btn"
+                                    type="button"
+                                    data-go="1"
+                                >
+                                    Previous
+                                </button>
+                                <button
+                                    class="turn-btn primary"
+                                    type="button"
+                                    data-go="3"
+                                >
+                                    Next chapter
+                                </button>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <section
+                class="chapter"
+                data-chapter="3"
+                data-img="https://images.unsplash.com/photo-1660645056288-d8b288963c6c?w=1800&q=82&fit=crop"
+                aria-labelledby="chapter-title-3"
+            >
+                <div class="chapter-bg" aria-hidden="true"></div>
+                <div class="chapter-hero">
+                    <div class="hero-copy">
+                        <p class="chapter-count">Chapter IV</p>
+                        <div class="route-line" aria-hidden="true"></div>
+                        <h2 id="chapter-title-3" class="hero-title">
+                            The pass at the top of everything
+                        </h2>
+                        <p class="place-note">
+                            Above the trees, the world stops pretending to be
+                            gentle.
+                        </p>
+                        <button class="read-btn" type="button" data-read>
+                            Read chapter
+                        </button>
+                    </div>
+                </div>
+                <div class="chapter-read">
+                    <div class="reading-shell">
+                        <article class="reading-sheet">
+                            <p class="ch-eyebrow">Rohtang Pass, 3978 metres</p>
+                            <p class="paragraph-block">
+                                The jeep left before sunrise. Manali was still
+                                half asleep, shutters down, tea stalls beginning
+                                to glow. You sat by the window and watched the
+                                road climb out of the valley in tight bends.
+                                With every turn, the trees changed. With every
+                                turn, the air asked a little more from your
+                                chest.
+                            </p>
+                            <p class="paragraph-block">
+                                At first everyone in the jeep tried to talk.
+                                Someone asked where you were from. Someone
+                                compared routes. Someone claimed the road was
+                                better this year, then immediately pointed at a
+                                broken edge where the mountain had fallen away.
+                                After a while, conversation thinned. The road
+                                became too serious for small talk.
+                            </p>
+                            <p class="paragraph-block">
+                                By the time light came, clouds were below the
+                                road. That was the first real shock. Not snow,
+                                not height, but the feeling that the world had
+                                quietly rearranged its order while you were not
+                                looking. The soft parts had been left behind.
+                                The land became rock, wind, old ice, and a sky
+                                so near it felt like it could press a thumbprint
+                                into your forehead.
+                            </p>
+                            <p class="paragraph-block">
+                                Rohtang did not welcome you, and that was part
+                                of its truth. The wind came from three
+                                directions at once. Your eyes watered
+                                immediately. Your hands forgot how to be warm.
+                                Two passengers stepped out, laughed nervously,
+                                and went back in. You stayed because some
+                                stubborn part of you wanted to know what would
+                                happen if you did not retreat the moment the
+                                place became difficult.
+                            </p>
+                            <p class="paragraph-block">
+                                Nothing dramatic happened. No revelation opened
+                                in the clouds. You simply stood there, breathing
+                                badly, looking at snowfields that had no
+                                interest in being understood. And still,
+                                something loosened. Not joy. Relief, maybe. The
+                                relief of being somewhere that did not flatter
+                                you, did not soften itself for you, and still
+                                allowed you to stand inside it.
+                            </p>
+                            <p class="paragraph-block">
+                                On the descent, the landscape changed color.
+                                Green withdrew. Brown and silver took over.
+                                Villages appeared where villages seemed
+                                impossible, a few roofs, a few walls, smoke
+                                rising thinly into huge air. You thought about
+                                the courage of ordinary life in a place like
+                                this. Not the dramatic kind people praise from
+                                far away, but the daily kind: waking, cooking,
+                                repairing, waiting out weather, beginning again.
+                            </p>
+                            <p class="paragraph-block">
+                                By evening, your face felt windburned and your
+                                hair smelled of dust. You were more tired than
+                                you wanted to admit. But under the tiredness was
+                                a clean feeling, almost bright. You had crossed
+                                something. The map would call it a pass. Your
+                                body knew it as a threshold.
+                            </p>
+                            <div class="page-turner">
+                                <button
+                                    class="turn-btn"
+                                    type="button"
+                                    data-hero
+                                >
+                                    See the place
+                                </button>
+                                <button
+                                    class="turn-btn"
+                                    type="button"
+                                    data-go="2"
+                                >
+                                    Previous
+                                </button>
+                                <button
+                                    class="turn-btn primary"
+                                    type="button"
+                                    data-go="4"
+                                >
+                                    Next chapter
+                                </button>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <section
+                class="chapter"
+                data-chapter="4"
+                data-img="https://images.unsplash.com/photo-1673246239376-f3c01a13bab0?w=1800&q=82&fit=crop"
+                aria-labelledby="chapter-title-4"
+            >
+                <div class="chapter-bg" aria-hidden="true"></div>
+                <div class="chapter-hero">
+                    <div class="hero-copy">
+                        <p class="chapter-count">Chapter V</p>
+                        <div class="route-line" aria-hidden="true"></div>
+                        <h2 id="chapter-title-4" class="hero-title">
+                            The silence of Key
+                        </h2>
+                        <p class="place-note">
+                            Some places answer only after you stop performing a
+                            question.
+                        </p>
+                        <button class="read-btn" type="button" data-read>
+                            Read chapter
+                        </button>
+                    </div>
+                </div>
+                <div class="chapter-read">
+                    <div class="reading-shell">
+                        <article class="reading-sheet">
+                            <p class="ch-eyebrow">Spiti, thin blue air</p>
+                            <p class="paragraph-block">
+                                Spiti changed the scale of everything. The
+                                valley was not lush, not soft, not generous in
+                                the usual ways. It was ochre, ash, walnut,
+                                stone, and a blue sky so severe it felt newly
+                                invented. Villages held to the slopes by
+                                stubbornness. Prayer flags wore themselves into
+                                thread and kept moving anyway.
+                            </p>
+                            <p class="paragraph-block">
+                                You had imagined silence as emptiness. Spiti
+                                corrected you. Its silence was full of small
+                                things: wind pressing through a crack, the dry
+                                scrape of your shoe on dust, your own breathing
+                                becoming louder than you expected. Without city
+                                noise, your thoughts had nowhere to hide. Some
+                                came gently. Some arrived like people you had
+                                been avoiding.
+                            </p>
+                            <p class="paragraph-block">
+                                The road moved beside the river for long
+                                stretches, then rose away from it, then
+                                returned. The water looked cold enough to be a
+                                warning. Every few kilometres, the valley opened
+                                wider and made your private worries look almost
+                                shy. You did not feel unimportant in a cruel
+                                way. You felt relieved of the need to be the
+                                center of every question.
+                            </p>
+                            <p class="paragraph-block">
+                                Key Monastery appeared around a bend like a
+                                sentence you had been trying to finish. White
+                                walls climbed the hill in layers. Dark windows
+                                watched the valley. Somewhere inside, a drum
+                                sounded once, then again, and the space around
+                                it grew larger. You sat below the monastery with
+                                your journal open and wrote nothing. It was the
+                                most honest thing you could have done.
+                            </p>
+                            <p class="paragraph-block">
+                                A monk walked past, looked where you were
+                                looking, and nodded once. You nodded back. No
+                                greeting, no explanation. It was enough. You had
+                                come a long way to be quiet, but the quiet was
+                                not empty. It was holding you without asking you
+                                to become impressive inside it.
+                            </p>
+                            <p class="paragraph-block">
+                                Later, you walked slowly because the air made
+                                speed feel foolish. Your heart beat harder on
+                                small slopes. Your lips were dry. Your hands
+                                were cold even in sunlight. The body became
+                                honest at altitude. It did not care how composed
+                                you looked. It asked for patience, and for once,
+                                you gave it some.
+                            </p>
+                            <p class="paragraph-block">
+                                That evening, the sky changed in layers: blue,
+                                silver, bruised violet. You watched until the
+                                monastery lost its edges and became a pale shape
+                                on the hill. You had thought the journey would
+                                make you feel powerful. Instead, it made you
+                                feel clear. That was better.
+                            </p>
+                            <div class="page-turner">
+                                <button
+                                    class="turn-btn"
+                                    type="button"
+                                    data-hero
+                                >
+                                    See the place
+                                </button>
+                                <button
+                                    class="turn-btn"
+                                    type="button"
+                                    data-go="3"
+                                >
+                                    Previous
+                                </button>
+                                <button
+                                    class="turn-btn primary"
+                                    type="button"
+                                    data-go="5"
+                                >
+                                    Next chapter
+                                </button>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <section
+                class="chapter"
+                data-chapter="5"
+                data-img="https://images.unsplash.com/photo-1697984286841-5cedb7885109?w=1800&q=82&fit=crop"
+                aria-labelledby="chapter-title-5"
+            >
+                <div class="chapter-bg" aria-hidden="true"></div>
+                <div class="chapter-hero">
+                    <div class="hero-copy">
+                        <p class="chapter-count">Chapter VI</p>
+                        <div class="route-line" aria-hidden="true"></div>
+                        <h2 id="chapter-title-5" class="hero-title">
+                            Moon lake
+                        </h2>
+                        <p class="place-note">
+                            At the end, the map becomes water.
+                        </p>
+                        <button class="read-btn" type="button" data-read>
+                            Read chapter
+                        </button>
+                    </div>
+                </div>
+                <div class="chapter-read">
+                    <div class="reading-shell">
+                        <article class="reading-sheet">
+                            <p class="ch-eyebrow">Chandra Taal, 4250 metres</p>
+                            <p class="paragraph-block">
+                                The last walk was not cinematic. It was not the
+                                kind of moment that announces itself with music.
+                                It was stones under your shoes, wind against
+                                your face, breath counting itself, and the small
+                                negotiation between your body and the altitude.
+                                You kept walking because the map said the lake
+                                was close, and because by then you had learned
+                                that close in the mountains is not a promise. It
+                                is only encouragement.
+                            </p>
+                            <p class="paragraph-block">
+                                The path kept disappearing into earth that
+                                looked the same in every direction. You stopped
+                                more than once to check whether you were still
+                                moving toward anything real. The mountains did
+                                not help. They stood around you with their
+                                ancient patience, giving no sign, offering no
+                                reassurance. You had to continue without being
+                                comforted by certainty.
+                            </p>
+                            <p class="paragraph-block">
+                                Then Chandra Taal appeared without ceremony. One
+                                moment, bare mountains and tired legs. The next,
+                                water. Blue-green, crescent-shaped, impossible,
+                                held in a bowl of brown earth as if the sky had
+                                spilled and decided to stay. You stopped so
+                                suddenly that your own silence startled you.
+                            </p>
+                            <p class="paragraph-block">
+                                You sat because your legs chose before your mind
+                                could make a decision. The lake was so still
+                                that reflection stopped being reflection. It
+                                became another world arranged beneath this one,
+                                a second sky, a second range of mountains,
+                                perfect and unreachable. For a while, you did
+                                not try to make meaning from it. You just let it
+                                be larger than you.
+                            </p>
+                            <p class="paragraph-block">
+                                There was no one to perform the moment for. No
+                                one to say the right sentence to. No one to
+                                watch your face and decide what it meant. The
+                                privacy of that felt enormous. You had imagined
+                                arrival as a rush, but it was quieter than that.
+                                It was a deep settling, like some long-held
+                                breath had finally found a place to end.
+                            </p>
+                            <p class="paragraph-block">
+                                And then, slowly, Lucknow returned. Not as
+                                homesickness. As presence. The people you love,
+                                the language you think in, the rooms that formed
+                                you, the younger version of you who once looked
+                                at this place on a screen and wondered if she
+                                would ever be brave enough to go. None of it had
+                                been left behind. It had traveled in you,
+                                quietly, all the way to the edge of the moon
+                                lake.
+                            </p>
+                            <p class="paragraph-block">
+                                The light changed. The mountains turned gold,
+                                then rose, then a violet that felt almost
+                                unreal. Cold came quickly, the way it does at
+                                altitude, all at once and without negotiation.
+                                You stayed a little longer anyway. Some moments
+                                ask to be witnessed completely. This one had
+                                waited for you.
+                            </p>
+                            <p class="final-line">
+                                You came all this way. The lake kept the proof.
+                            </p>
+                            <div class="page-turner">
+                                <button
+                                    class="turn-btn"
+                                    type="button"
+                                    data-hero
+                                >
+                                    See the place
+                                </button>
+                                <button
+                                    class="turn-btn"
+                                    type="button"
+                                    data-go="4"
+                                >
+                                    Previous
+                                </button>
+                                <button
+                                    class="turn-btn primary"
+                                    type="button"
+                                    data-ending
+                                >
+                                    Finish the trip
+                                </button>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <section
+                id="ending"
+                class="ending"
+                aria-labelledby="ending-title"
+                aria-hidden="true"
+            >
+                <div class="intro-copy">
+                    <p class="intro-kicker">Back to Lucknow</p>
+                    <h2 id="ending-title" class="intro-title">
+                        Keep a little mountain
+                    </h2>
+                    <p class="intro-subtitle">
+                        Now you have to come back, to the routine, to the page,
+                        to work, to the days that sometimes repeat themselves. I
+                        hope this made the room feel a little wider for a while.
+                    </p>
+                    <p class="intro-subtitle">
+                        The real mountains are still waiting. Everest too,
+                        somewhere ahead of you. Until you stand there yourself,
+                        keep this as a small proof that the road is still open.
+                    </p>
+                    <p class="gift-signature">Hishaam</p>
+                    <div class="intro-actions">
+                        <button class="begin-btn" type="button" data-intro>
+                            Back to start
+                        </button>
+                        <button class="turn-btn" type="button" data-go="5">
+                            Return to the lake
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <audio id="chapter-audio" preload="auto"></audio>
+        <button
+            id="audio-toggle"
+            type="button"
+            aria-label="Toggle low ambient soundtrack"
+            aria-pressed="true"
+        >
+            Sound on
+        </button>
+
+        <script>
+            const TRACKS = [
+                { src: "assets/audio/chapter-1.mp3", start: 18 },
+                { src: "assets/audio/chapter-2.mp3", start: 50 },
+                { src: "assets/audio/chapter-3.mp3", start: 18 },
+                { src: "assets/audio/chapter-4.mp3", start: 30 },
+                { src: "assets/audio/chapter-5.mp3", start: 10 },
+                { src: "assets/audio/chapter-6.mp3", start: 30 },
+            ];
+
+            const AUDIO_VOLUME = 0.045;
+            let currentChapter = 0;
+            let imagesReady = false;
+            let audioEnabled = true;
+            let activeTrack = -1;
+            let fadeTimer = null;
+
+            const chapters = Array.from(document.querySelectorAll(".chapter"));
+            const beginBtn = document.getElementById("begin-btn");
+            const retryBtn = document.getElementById("retry-btn");
+            const intro = document.getElementById("intro");
+            const stage = document.getElementById("stage");
+            const ending = document.getElementById("ending");
+            const chapterAudio = document.getElementById("chapter-audio");
+            const audioToggle = document.getElementById("audio-toggle");
+
+            function boot() {
+                bindEvents();
+                preloadChapterImages();
+                prepareTrack(0);
+                showChapter(0, { scroll: false, playAudio: false });
+            }
+
+            function bindEvents() {
+                beginBtn.addEventListener("click", beginJourney);
+                retryBtn.addEventListener("click", preloadChapterImages);
+                audioToggle.addEventListener("click", toggleAudio);
+
+                stage.addEventListener("click", (event) => {
+                    const readButton = event.target.closest("[data-read]");
+                    if (readButton) {
+                        showRead(currentChapter);
+                        return;
+                    }
+
+                    const heroButton = event.target.closest("[data-hero]");
+                    if (heroButton) {
+                        showHero(currentChapter);
+                        return;
+                    }
+
+                    const endingButton = event.target.closest("[data-ending]");
+                    if (endingButton) {
+                        showEnding();
+                        return;
+                    }
+
+                    const chapterButton = event.target.closest("[data-go]");
+                    if (!chapterButton) return;
+                    showChapter(Number(chapterButton.dataset.go), {
+                        view: "hero",
+                    });
+                });
+
+                ending.addEventListener("click", (event) => {
+                    const introButton = event.target.closest("[data-intro]");
+                    if (introButton) {
+                        showIntro();
+                        return;
+                    }
+
+                    const chapterButton = event.target.closest("[data-go]");
+                    if (!chapterButton) return;
+                    showChapter(Number(chapterButton.dataset.go), {
+                        view: "hero",
+                    });
+                });
+
+                document.addEventListener("keydown", (event) => {
+                    if (!document.body.classList.contains("journey-started"))
+                        return;
+                    if (event.key === "ArrowRight") {
+                        event.preventDefault();
+                        if (ending.classList.contains("active")) {
+                            showChapter(0, { view: "hero" });
+                            return;
+                        }
+                        if (currentChapter === chapters.length - 1) {
+                            showEnding();
+                            return;
+                        }
+                        showChapter(currentChapter + 1, { view: "hero" });
+                    }
+                    if (
+                        event.key === "ArrowLeft" &&
+                        ending.classList.contains("active")
+                    ) {
+                        event.preventDefault();
+                        showChapter(chapters.length - 1, { view: "read" });
+                        return;
+                    }
+                    if (event.key === "ArrowLeft" && currentChapter > 0) {
+                        event.preventDefault();
+                        showChapter(currentChapter - 1, { view: "hero" });
+                    }
+                });
+            }
+
+            function preloadChapterImages() {
+                imagesReady = false;
+                beginBtn.disabled = true;
+                beginBtn.textContent = "Loading images";
+                retryBtn.classList.remove("is-visible");
+
+                let loaded = 0;
+                const tasks = chapters.map((chapter) => {
+                    const url = chapter.dataset.img;
+                    return new Promise((resolve) => {
+                        const image = new Image();
+                        image.decoding = "async";
+                        image.onload = () => {
+                            loaded += 1;
+                            chapter.style.setProperty(
+                                "--chapter-image",
+                                `url("${url}")`,
+                            );
+                            resolve({ ok: true });
+                        };
+                        image.onerror = () => {
+                            resolve({ ok: false, url });
+                        };
+                        image.src = url;
+                    });
+                });
+
+                Promise.all(tasks).then((results) => {
+                    const failed = results.filter((result) => !result.ok);
+                    if (failed.length) {
+                        beginBtn.disabled = true;
+                        beginBtn.textContent = "Images blocked";
+                        retryBtn.classList.add("is-visible");
+                        return;
+                    }
+
+                    imagesReady = true;
+                    beginBtn.disabled = false;
+                    beginBtn.textContent = "Begin";
+                });
+            }
+
+            function beginJourney() {
+                if (!imagesReady) return;
+                document.body.classList.add("journey-started");
+                intro.classList.add("is-gone");
+                showChapter(currentChapter, { view: "hero", playAudio: true });
+            }
+
+            function showIntro() {
+                ending.classList.remove("active");
+                ending.setAttribute("aria-hidden", "true");
+                chapters.forEach((chapter) => {
+                    chapter.classList.remove("active");
+                    chapter.setAttribute("aria-hidden", "true");
+                });
+                document.body.classList.remove("journey-started");
+                intro.classList.remove("is-gone");
+                currentChapter = 0;
+                prepareTrack(0);
+                window.scrollTo({
+                    top: 0,
+                    behavior: prefersReducedMotion() ? "auto" : "smooth",
+                });
+            }
+
+            function showChapter(index, options = {}) {
+                const {
+                    scroll = true,
+                    view = "hero",
+                    playAudio = true,
+                } = options;
+                const previousChapter = currentChapter;
+                currentChapter = Math.max(
+                    0,
+                    Math.min(index, chapters.length - 1),
+                );
+
+                chapters.forEach((chapter, chapterIndex) => {
+                    const active = chapterIndex === currentChapter;
+                    chapter.classList.toggle("active", active);
+                    chapter.setAttribute(
+                        "aria-hidden",
+                        active ? "false" : "true",
+                    );
+                });
+                ending.classList.remove("active");
+                ending.setAttribute("aria-hidden", "true");
+
+                if (scroll) {
+                    const target =
+                        view === "read"
+                            ? chapters[currentChapter].querySelector(
+                                  ".chapter-read",
+                              )
+                            : chapters[currentChapter].querySelector(
+                                  ".chapter-hero",
+                              );
+                    target.scrollIntoView({
+                        block: "start",
+                        behavior: prefersReducedMotion() ? "auto" : "smooth",
+                    });
+                }
+
+                if (!document.body.classList.contains("journey-started")) {
+                    prepareTrack(currentChapter);
+                    return;
+                }
+
+                if (
+                    playAudio &&
+                    (previousChapter !== currentChapter ||
+                        activeTrack !== currentChapter ||
+                        chapterAudio.paused)
+                ) {
+                    playTrack(currentChapter);
+                }
+            }
+
+            function showRead(index) {
+                chapters[index].querySelector(".chapter-read").scrollIntoView({
+                    block: "start",
+                    behavior: prefersReducedMotion() ? "auto" : "smooth",
+                });
+            }
+
+            function showHero(index) {
+                chapters[index].querySelector(".chapter-hero").scrollIntoView({
+                    block: "start",
+                    behavior: prefersReducedMotion() ? "auto" : "smooth",
+                });
+            }
+
+            function showEnding() {
+                chapters.forEach((chapter) => {
+                    chapter.classList.remove("active");
+                    chapter.setAttribute("aria-hidden", "true");
+                });
+
+                ending.classList.add("active");
+                ending.setAttribute("aria-hidden", "false");
+                ending.scrollIntoView({
+                    block: "start",
+                    behavior: prefersReducedMotion() ? "auto" : "smooth",
+                });
+            }
+
+            function prepareTrack(index) {
+                if (activeTrack === index) return;
+                const track = TRACKS[index];
+                activeTrack = index;
+                chapterAudio.pause();
+                chapterAudio.src = track.src;
+                chapterAudio.load();
+            }
+
+            function playTrack(index) {
+                if (!audioEnabled) {
+                    prepareTrack(index);
+                    return;
+                }
+
+                const track = TRACKS[index];
+                clearFade();
+                chapterAudio.pause();
+                chapterAudio.volume = 0;
+
+                if (activeTrack !== index) {
+                    activeTrack = index;
+                    chapterAudio.src = track.src;
+                    chapterAudio.load();
+                }
+
+                seekWhenReady(track.start);
+
+                const playPromise = chapterAudio.play();
+                if (playPromise) {
+                    playPromise
+                        .then(() => fadeAudio(AUDIO_VOLUME))
+                        .catch(() => {
+                            audioEnabled = false;
+                            updateAudioToggle();
+                        });
+                } else {
+                    fadeAudio(AUDIO_VOLUME);
+                }
+            }
+
+            function seekWhenReady(start) {
+                const seek = () => {
+                    const duration = chapterAudio.duration;
+                    const safeStart = Number.isFinite(duration)
+                        ? Math.min(start, Math.max(0, duration - 0.5))
+                        : start;
+
+                    try {
+                        chapterAudio.currentTime = safeStart;
+                    } catch (error) {
+                        // Some browsers delay seeking until enough metadata is available.
+                    }
+                };
+
+                if (chapterAudio.readyState >= 1) {
+                    seek();
+                } else {
+                    chapterAudio.addEventListener("loadedmetadata", seek, {
+                        once: true,
+                    });
+                }
+            }
+
+            function fadeAudio(targetVolume) {
+                clearFade();
+                let step = 0;
+                const steps = 14;
+                fadeTimer = window.setInterval(() => {
+                    step += 1;
+                    chapterAudio.volume = Math.min(
+                        targetVolume,
+                        (targetVolume * step) / steps,
+                    );
+                    if (step >= steps) clearFade();
+                }, 70);
+            }
+
+            function clearFade() {
+                if (fadeTimer) {
+                    window.clearInterval(fadeTimer);
+                    fadeTimer = null;
+                }
+            }
+
+            function toggleAudio() {
+                audioEnabled = !audioEnabled;
+                updateAudioToggle();
+
+                if (audioEnabled) {
+                    playTrack(currentChapter);
+                    return;
+                }
+
+                clearFade();
+                chapterAudio.pause();
+            }
+
+            function updateAudioToggle() {
+                audioToggle.textContent = audioEnabled
+                    ? "Sound on"
+                    : "Sound off";
+                audioToggle.setAttribute(
+                    "aria-pressed",
+                    audioEnabled ? "true" : "false",
+                );
+            }
+
+            function prefersReducedMotion() {
+                return window.matchMedia("(prefers-reduced-motion: reduce)")
+                    .matches;
+            }
+
+            boot();
+        </script>
+    </body>
+</html>
